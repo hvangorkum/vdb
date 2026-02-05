@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tafeltennistoernooi - Eliminatieschema</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 4px solid #1e3c72;
+            padding-bottom: 30px;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+        
+        h1 {
+            color: #1e3c72;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .tournaments {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        
+        .tournament-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border: 3px solid #1e3c72;
+        }
+        
+        .tournament-section h2 {
+            color: #1e3c72;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #1e3c72;
+        }
+        
+        .tournament-section.losers h2 {
+            color: #c9302c;
+            border-bottom: 2px solid #c9302c;
+        }
+        
+        .tournament-section.losers {
+            border: 3px solid #c9302c;
+        }
+        
+        .round {
+            margin-bottom: 30px;
+        }
+        
+        .round-title {
+            font-weight: bold;
+            color: #1e3c72;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        .losers .round-title {
+            color: #c9302c;
+        }
+        
+        .matches {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .match {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        
+        .match:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #1e3c72;
+        }
+        
+        .match-header {
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        
+        .players {
+            display: grid;
+            gap: 8px;
+        }
+        
+        .player-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .player-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .score-box {
+            width: 50px;
+            height: 35px;
+            border: 2px solid #1e3c72;
+            border-radius: 5px;
+            background: white;
+            text-align: center;
+            font-weight: bold;
+            color: #1e3c72;
+            font-size: 1.1em;
+        }
+        
+        .winner {
+            background: #d4edda !important;
+            border-color: #28a745 !important;
+        }
+        
+        .loser {
+            background: #f8d7da !important;
+            border-color: #dc3545 !important;
+        }
+        
+        .finale {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: 3px solid #f0c419;
+            padding: 20px;
+        }
+        
+        .finale .match-header {
+            font-size: 1.3em;
+            color: #8B4513;
+        }
+        
+        .finale .player-row {
+            background: rgba(255,255,255,0.9);
+        }
+        
+        .finale .score-box {
+            border-color: #8B4513;
+            color: #8B4513;
+        }
+        
+        .initial-rounds {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 1200px) {
+            .tournaments {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .initial-rounds {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="data:image/png;base64,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" alt="Logo" class="logo">
+            <h1>🏓 Tafeltennistoernooi</h1>
+            <p class="subtitle">Eliminatieschema - Winnaars & Verliezers</p>
+        </div>
+        
+        <div class="tournaments">
+            <!-- WINNAARSTOERNOOI -->
+            <div class="tournament-section winners">
+                <h2>🏆 Winnaarstoernooi</h2>
+                
+                <div class="round">
+                    <div class="round-title">Ronde 1 - Eerste Wedstrijden</div>
+                    <div class="initial-rounds">
+                        <div class="match" data-match="v1">
+                            <div class="match-header">v1</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name">Wichert Jan Marije vd Vegt</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v1')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name">Erik Compagner</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v1')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="v2">
+                            <div class="match-header">v2</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name">Lisanne Knoeff</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v2')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name">Arjend Jan Beens</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v2')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="v3">
+                            <div class="match-header">v3</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name">Ipie Jongsma</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v3')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name">Steven Zijl</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v3')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="v4">
+                            <div class="match-header">v4</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name">Thijmen Koning</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v4')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name">Hidde van Gorkum</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v4')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="v5">
+                            <div class="match-header">v5</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name">Ellemeijn Roetman</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v5')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name">Tom Zijlstra</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v5')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="v6">
+                            <div class="match-header">v6</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name">Benjamin Kwant</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v6')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name">Michel de Vries</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v6')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="v7">
+                            <div class="match-header">v7</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name">Emin Güner</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v7')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name">invaller 1</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v7')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="v8">
+                            <div class="match-header">v8</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name">invaller 2</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v8')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name">—</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('v8')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="round">
+                    <div class="round-title">Ronde 2 - Kwartfinales</div>
+                    <div class="matches">
+                        <div class="match" data-match="w1">
+                            <div class="match-header">w1</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="v1-winner">winnaar v1</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w1')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="v5-winner">winnaar v5</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w1')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="w2">
+                            <div class="match-header">w2</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="v2-winner">winnaar v2</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w2')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="v6-winner">winnaar v6</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w2')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="w3">
+                            <div class="match-header">w3</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="v3-winner">winnaar v3</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w3')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="v7-winner">winnaar v7</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w3')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="w4">
+                            <div class="match-header">w4</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="v4-winner">winnaar v4</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w4')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="v8-winner">winnaar v8</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w4')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="round">
+                    <div class="round-title">Ronde 3 - Halve Finales</div>
+                    <div class="matches">
+                        <div class="match" data-match="w5">
+                            <div class="match-header">w5</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="w1-winner">winnaar w1</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w5')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="w4-winner">winnaar w4</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w5')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="w6">
+                            <div class="match-header">w6</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="w2-winner">winnaar w2</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w6')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="w3-winner">winnaar w3</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w6')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="round">
+                    <div class="round-title">🏆 FINALE</div>
+                    <div class="matches">
+                        <div class="match finale" data-match="w7">
+                            <div class="match-header">w7 - FINALE WINNAARSTOERNOOI</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="w5-winner">winnaar w5</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w7')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="w6-winner">winnaar w6</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('w7')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- VERLIEZERSTOERNOOI -->
+            <div class="tournament-section losers">
+                <h2>🎯 Verliezerstoernooi</h2>
+                
+                <div class="round">
+                    <div class="round-title">Ronde 1 - Eerste Herkansing</div>
+                    <div class="matches">
+                        <div class="match" data-match="l1">
+                            <div class="match-header">l1</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="v1-loser">verliezer v1</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l1')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="v5-loser">verliezer v5</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l1')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="l2">
+                            <div class="match-header">l2</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="v2-loser">verliezer v2</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l2')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="v6-loser">verliezer v6</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l2')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="l3">
+                            <div class="match-header">l3</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="v3-loser">verliezer v3</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l3')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="v7-loser">verliezer v7</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l3')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="l4">
+                            <div class="match-header">l4</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="v4-loser">verliezer v4</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l4')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="v8-loser">verliezer v8</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l4')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="round">
+                    <div class="round-title">Ronde 2 - Halve Finales</div>
+                    <div class="matches">
+                        <div class="match" data-match="l5">
+                            <div class="match-header">l5</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="l1-winner">winnaar l1</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l5')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="l4-winner">winnaar l4</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l5')">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="match" data-match="l6">
+                            <div class="match-header">l6</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="l2-winner">winnaar l2</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l6')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="l3-winner">winnaar l3</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l6')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="round">
+                    <div class="round-title">🎯 FINALE</div>
+                    <div class="matches">
+                        <div class="match finale" data-match="l7">
+                            <div class="match-header">l7 - FINALE VERLIEZERSTOERNOOI</div>
+                            <div class="players">
+                                <div class="player-row" data-player="1">
+                                    <span class="player-name" data-from="l5-winner">winnaar l5</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l7')">
+                                </div>
+                                <div class="player-row" data-player="2">
+                                    <span class="player-name" data-from="l6-winner">winnaar l6</span>
+                                    <input type="number" class="score-box" min="0" placeholder="0" onchange="updateMatch('l7')">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Object om match resultaten op te slaan
+        const matchResults = {};
+        
+        function updateMatch(matchId) {
+            const matchDiv = document.querySelector(`[data-match="${matchId}"]`);
+            const playerRows = matchDiv.querySelectorAll('.player-row');
+            
+            const player1 = {
+                name: playerRows[0].querySelector('.player-name').textContent,
+                score: parseInt(playerRows[0].querySelector('.score-box').value) || 0,
+                row: playerRows[0]
+            };
+            
+            const player2 = {
+                name: playerRows[1].querySelector('.player-name').textContent,
+                score: parseInt(playerRows[1].querySelector('.score-box').value) || 0,
+                row: playerRows[1]
+            };
+            
+            // Bepaal winnaar en verliezer
+            let winner, loser;
+            if (player1.score > player2.score) {
+                winner = player1;
+                loser = player2;
+                player1.row.classList.add('winner');
+                player2.row.classList.add('loser');
+                player1.row.classList.remove('loser');
+                player2.row.classList.remove('winner');
+            } else if (player2.score > player1.score) {
+                winner = player2;
+                loser = player1;
+                player2.row.classList.add('winner');
+                player1.row.classList.add('loser');
+                player2.row.classList.remove('loser');
+                player1.row.classList.remove('winner');
+            } else {
+                // Gelijke score - verwijder alle classes
+                player1.row.classList.remove('winner', 'loser');
+                player2.row.classList.remove('winner', 'loser');
+                return;
+            }
+            
+            // Sla resultaat op
+            matchResults[matchId] = {
+                winner: winner.name,
+                loser: loser.name
+            };
+            
+            // Update volgende rondes
+            updateNextMatches(matchId);
+        }
+        
+        function updateNextMatches(matchId) {
+            const result = matchResults[matchId];
+            if (!result) return;
+            
+            // Zoek alle spans die afhankelijk zijn van deze match
+            const winnerTargets = document.querySelectorAll(`[data-from="${matchId}-winner"]`);
+            const loserTargets = document.querySelectorAll(`[data-from="${matchId}-loser"]`);
+            
+            winnerTargets.forEach(span => {
+                span.textContent = result.winner;
+            });
+            
+            loserTargets.forEach(span => {
+                span.textContent = result.loser;
+            });
+        }
+    </script>
+</body>
+</html>
